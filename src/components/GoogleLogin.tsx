@@ -11,10 +11,10 @@ export default function GoogleLogin() {
   const [isLoading, setIsLoading] = useState(false);
   const [savedName, setSavedName] = useState<string | null>(null);
 
-  // Read the last-used name from sessionStorage once (client-side only)
+  // Read the last-used name from localStorage once (client-side only)
   useEffect(() => {
     try {
-      const stored = sessionStorage.getItem('cw_userName');
+      const stored = localStorage.getItem('cw_userName');
       if (stored && stored.trim()) setSavedName(stored.trim());
     } catch { /* ignore */ }
   }, []);
