@@ -17,6 +17,8 @@
   --text-dim:       #484f58;
   --border-default: rgba(48, 54, 61, 0.6);
   --border-subtle:  rgba(48, 54, 61, 0.3);
+  /* Mobile bottom nav height */
+  --mobile-nav-h:   60px;
 }
 
 /* ─── Base ────────────────────────────────────────────────────── */
@@ -63,7 +65,48 @@ body {
   background-clip: text;
 }
 
-/* ─── Responsive adjustments ──────────────────────────────────── */
+/* ─── Responsive: Desktop (sidebar visible) ───────────────────── */
+.inbox-sidebar { display: flex; }
+
+/* ─── Mobile bottom navigation bar ───────────────────────────── */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--mobile-nav-h);
+  background: rgba(22, 27, 34, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(48, 54, 61, 0.6);
+  z-index: 50;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 8px;
+  /* Support for phones with home indicator */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ─── Mobile: content padding to clear bottom nav ────────────── */
+.mobile-content-pad {
+  padding-bottom: 0;
+}
+
+/* ─── Responsive breakpoints ──────────────────────────────────── */
 @media (max-width: 768px) {
-  .inbox-sidebar { display: none !important; }
+  /* Hide desktop sidebar, show mobile nav */
+  .inbox-sidebar        { display: none !important; }
+  .mobile-bottom-nav    { display: flex; }
+  .mobile-content-pad   { padding-bottom: var(--mobile-nav-h) !important; }
+
+  /* Make email content area use the full height minus nav */
+  .inbox-main {
+    height: calc(100dvh - var(--mobile-nav-h));
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra small screens */
+  .hide-xs { display: none !important; }
 }

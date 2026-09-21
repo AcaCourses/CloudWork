@@ -99,7 +99,7 @@ export const CLIENTS: Client[] = [
     colorTo: '#4285f4',
     caseSummary: 'Necesita modernizar un sistema escolar legado con restricciones de residencia de datos.',
     gemName: 'Lucía Ibarra - Universidad Pública',
-    gemLink: 'https://gemini.google.com/app/GEM_LINK_LUCIA_IBARRA',
+    gemLink: 'https://gemini.google.com/gem/18C6ojiXA8Npjz_0mJE3xJXybGRSU00uN?usp=sharing',
   },
   {
     id: 'diego',
@@ -111,7 +111,7 @@ export const CLIENTS: Client[] = [
     colorTo: '#ff6d5a',
     caseSummary: 'Su API tiene tráfico muy variable y no quiere administrar servidores.',
     gemName: 'Diego Salgado - RápidoYa',
-    gemLink: 'https://gemini.google.com/app/GEM_LINK_DIEGO_SALGADO',
+    gemLink: 'https://gemini.google.com/gem/1evLuxyjVKu5mWyEFHVqXex8lfIcGC1fg?usp=sharing',
   },
   {
     id: 'ana',
@@ -123,7 +123,7 @@ export const CLIENTS: Client[] = [
     colorTo: '#57bb8a',
     caseSummary: 'Opera 12 microservicios en contenedores y necesita alta disponibilidad y despliegues canary.',
     gemName: 'Ana Torres - PagaFácil',
-    gemLink: 'https://gemini.google.com/app/GEM_LINK_ANA_TORRES',
+    gemLink: 'https://gemini.google.com/gem/1I6M84109bgCKSQ4EC50J6p3as6Qi4DP0?usp=sharing',
   },
   {
     id: 'roberto',
@@ -135,7 +135,7 @@ export const CLIENTS: Client[] = [
     colorTo: '#fdd663',
     caseSummary: 'Quiere generar miniaturas automáticamente cuando se sube un archivo.',
     gemName: 'Roberto Nájera - Plataforma Educativa',
-    gemLink: 'https://gemini.google.com/app/GEM_LINK_ROBERTO_NAJERA',
+    gemLink: 'https://gemini.google.com/gem/1fP8WD_ORJbKVXVu_4teVK-P1wjyodPig?usp=sharing',
   },
   {
     id: 'carla',
@@ -147,7 +147,7 @@ export const CLIENTS: Client[] = [
     colorTo: '#b16cee',
     caseSummary: 'Quiere dejar de administrar su propio correo, sin tener personal técnico.',
     gemName: 'Carla Espinoza - Estudio Norte',
-    gemLink: 'https://gemini.google.com/app/GEM_LINK_CARLA_ESPINOZA',
+    gemLink: 'https://gemini.google.com/gem/1rZZFBjms3PjYsGZ093sQmNOjGVXlUIW7?usp=sharing',
   },
 ];
 

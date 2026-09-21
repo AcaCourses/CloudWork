@@ -575,29 +575,53 @@ export default function EmailView() {
   };
 
   return (
-    <motion.div
-      style={{ flex: 1, overflowY: 'auto', background: '#0d1117' }}
-      initial={{ opacity: 0, x: 40 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
-    >
+    <>
+      <style>{`
+        .email-view-toolbar-back {
+          display: flex;
+        }
+        .email-view-content {
+          padding: 24px 32px 60px;
+        }
+        .email-view-sender-email {
+          display: inline;
+        }
+        @media (max-width: 768px) {
+          /* Back button is in MobileBottomNav on mobile */
+          .email-view-toolbar-back { display: none !important; }
+          .email-view-content { padding: 16px 16px 80px !important; }
+          .email-view-sender-email { display: none !important; }
+        }
+      `}</style>
+      <motion.div
+        style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', background: '#0d1117' }}
+        initial={{ opacity: 0, x: 40 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
+      >
       {/* Top toolbar */}
       <div style={{
         display: 'flex', alignItems: 'center', gap: 8,
-        padding: '10px 20px',
+        padding: '10px 16px',
         borderBottom: '1px solid rgba(48,54,61,0.4)',
         position: 'sticky', top: 0, zIndex: 10,
         background: 'rgba(13,17,23,0.9)',
         backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
       }}>
-        <button id="back-to-inbox-btn" onClick={goBackToInbox} style={{
-          display: 'flex', alignItems: 'center', gap: 6,
-          padding: '6px 12px', borderRadius: 6,
-          background: 'rgba(48,54,61,0.3)',
-          border: '1px solid rgba(48,54,61,0.5)',
-          color: '#c9d1d9', fontSize: '0.8rem', fontWeight: 500,
-          cursor: 'pointer', fontFamily: 'inherit',
-        }}>
+        <button
+          id="back-to-inbox-btn"
+          onClick={goBackToInbox}
+          className="email-view-toolbar-back"
+          style={{
+            alignItems: 'center', gap: 6,
+            padding: '6px 12px', borderRadius: 6,
+            background: 'rgba(48,54,61,0.3)',
+            border: '1px solid rgba(48,54,61,0.5)',
+            color: '#c9d1d9', fontSize: '0.8rem', fontWeight: 500,
+            cursor: 'pointer', fontFamily: 'inherit',
+          }}
+        >
           <ArrowLeft size={16} />
           Volver a Recibidos
         </button>
@@ -614,10 +638,10 @@ export default function EmailView() {
       </div>
 
       {/* Email content */}
-      <div style={{ maxWidth: 800, margin: '0 auto', padding: '24px 32px 60px' }}>
+      <div className="email-view-content" style={{ maxWidth: 800, margin: '0 auto' }}>
         {/* Subject */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 24 }}>
-          <h1 style={{ fontSize: '1.35rem', fontWeight: 700, color: '#e6edf3', flex: 1, lineHeight: 1.4 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 20 }}>
+          <h1 style={{ fontSize: 'clamp(1.05rem, 4vw, 1.35rem)', fontWeight: 700, color: '#e6edf3', flex: 1, lineHeight: 1.4 }}>
             {email.subject}
           </h1>
           <Star size={20} color={email.starred ? '#fbbc04' : '#30363d'} fill={email.starred ? '#fbbc04' : 'none'} style={{ flexShrink: 0, marginTop: 6 }} />
@@ -625,27 +649,33 @@ export default function EmailView() {
 
         {/* Sender info */}
         <div style={{
-          display: 'flex', alignItems: 'center', gap: 14,
-          padding: '16px 0',
+          display: 'flex', alignItems: 'center', gap: 12,
+          padding: '14px 0',
           borderBottom: '1px solid rgba(48,54,61,0.3)',
-          marginBottom: 28,
+          marginBottom: 24,
+          minWidth: 0,
         }}>
           <div style={{
-            width: 44, height: 44, borderRadius: '50%',
+            width: 40, height: 40, borderRadius: '50%',
             background: `linear-gradient(135deg, ${email.fromColor}, ${email.fromColor}cc)`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '0.78rem', fontWeight: 700, color: '#fff',
+            fontSize: '0.76rem', fontWeight: 700, color: '#fff',
             flexShrink: 0,
             boxShadow: `0 2px 10px ${email.fromColor}33`,
           }}>
             {email.fromAvatar}
           </div>
-          <div style={{ flex: 1 }}>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-              <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#e6edf3' }}>{email.from}</span>
-              <span style={{ fontSize: '0.72rem', color: '#484f58' }}>&lt;{email.from.toLowerCase().replace(/\s/g, '.')}@google.com&gt;</span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, minWidth: 0 }}>
+              <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#e6edf3', whiteSpace: 'nowrap' }}>{email.from}</span>
+              <span
+                className="email-view-sender-email"
+                style={{ fontSize: '0.7rem', color: '#484f58', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+              >
+                &lt;{email.from.toLowerCase().replace(/\s/g, '.')}@google.com&gt;
+              </span>
             </div>
-            <p style={{ fontSize: '0.75rem', color: '#8b949e', marginTop: 2 }}>
+            <p style={{ fontSize: '0.74rem', color: '#8b949e', marginTop: 2 }}>
               para <strong style={{ color: '#c9d1d9' }}>{userName || 'mí'}</strong> · {email.time}
             </p>
           </div>
@@ -658,5 +688,6 @@ export default function EmailView() {
         <GoogleSignature sig={email.signature} />
       </div>
     </motion.div>
+  </>
   );
 }

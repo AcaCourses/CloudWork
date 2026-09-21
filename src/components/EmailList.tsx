@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
 import { EMAILS, Email } from '@/lib/data';
-import { Star, Paperclip, RefreshCw } from 'lucide-react';
+import { Star, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 
 function EmailRow({ email, index }: { email: Email; index: number }) {
@@ -27,8 +27,8 @@ function EmailRow({ email, index }: { email: Email; index: number }) {
       style={{
         display: 'flex',
         alignItems: 'center',
-        gap: 12,
-        padding: '12px 20px',
+        gap: 10,
+        padding: '11px 16px',
         cursor: 'pointer',
         background: isHovered
           ? 'rgba(26,115,232,0.06)'
@@ -38,9 +38,10 @@ function EmailRow({ email, index }: { email: Email; index: number }) {
         borderBottom: '1px solid rgba(48,54,61,0.3)',
         transition: 'background 0.15s',
         position: 'relative',
+        minWidth: 0,
       }}
     >
-      {/* Unread indicator */}
+      {/* Unread left-edge indicator */}
       {!isRead && (
         <div style={{
           position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)',
@@ -51,59 +52,74 @@ function EmailRow({ email, index }: { email: Email; index: number }) {
 
       {/* Avatar */}
       <div style={{
-        width: 36, height: 36, borderRadius: '50%',
+        width: 34, height: 34, borderRadius: '50%',
         background: `linear-gradient(135deg, ${email.fromColor}, ${email.fromColor}cc)`,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         flexShrink: 0,
-        fontSize: '0.68rem', fontWeight: 700, color: '#fff',
+        fontSize: '0.66rem', fontWeight: 700, color: '#fff',
         boxShadow: `0 2px 8px ${email.fromColor}33`,
       }}>
         {email.fromAvatar}
       </div>
 
-      {/* Content */}
+      {/* Content — takes all remaining space, truncates properly */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 2 }}>
+        {/* Row 1: sender name + role */}
+        <div style={{
+          display: 'flex', alignItems: 'baseline', gap: 6,
+          marginBottom: 2, minWidth: 0,
+        }}>
           <span style={{
             fontSize: '0.82rem',
             fontWeight: isRead ? 400 : 700,
             color: isRead ? '#8b949e' : '#e6edf3',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
+            flexShrink: 1,
+            minWidth: 0,
           }}>
             {email.from}
           </span>
-          <span style={{
-            fontSize: '0.7rem',
-            color: '#484f58',
-            whiteSpace: 'nowrap',
+          <span className="hide-xs" style={{
+            fontSize: '0.7rem', color: '#484f58',
+            whiteSpace: 'nowrap', flexShrink: 0,
           }}>
             {email.fromRole}
           </span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+
+        {/* Row 2: subject + preview */}
+        <div style={{
+          display: 'flex', alignItems: 'baseline', gap: 4,
+          minWidth: 0,
+        }}>
           <span style={{
-            fontSize: '0.82rem',
+            fontSize: '0.8rem',
             fontWeight: isRead ? 400 : 600,
             color: isRead ? '#8b949e' : '#e6edf3',
             whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            flexShrink: 0,
+            maxWidth: '45%',
           }}>
             {email.subject}
           </span>
           <span style={{
-            fontSize: '0.78rem',
-            color: '#484f58',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
+            fontSize: '0.77rem', color: '#484f58',
+            overflow: 'hidden', textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap', flex: 1, minWidth: 0,
           }}>
             — {email.preview}
           </span>
         </div>
       </div>
 
-      {/* Star */}
+      {/* Star — hidden on very small screens */}
       <Star
-        size={16}
+        className="hide-xs"
+        size={15}
         color={email.starred ? '#fbbc04' : '#30363d'}
         fill={email.starred ? '#fbbc04' : 'none'}
         style={{ flexShrink: 0 }}
@@ -111,12 +127,11 @@ function EmailRow({ email, index }: { email: Email; index: number }) {
 
       {/* Time */}
       <span style={{
-        fontSize: '0.72rem',
+        fontSize: '0.7rem',
         fontWeight: isRead ? 400 : 600,
         color: isRead ? '#484f58' : '#4285f4',
         whiteSpace: 'nowrap',
-        minWidth: 55,
-        textAlign: 'right',
+        flexShrink: 0,
       }}>
         {email.time}
       </span>
@@ -154,7 +169,6 @@ function LoadingIndicator() {
 export default function EmailList() {
   const { visibleEmailIds, allEmailsLoaded } = useApp();
 
-  // Get the visible emails in the correct order (newest first for display)
   const visibleEmails = EMAILS.filter(e => visibleEmailIds.includes(e.id));
   const displayEmails = [...visibleEmails].reverse();
 
@@ -162,25 +176,25 @@ export default function EmailList() {
     <div style={{
       flex: 1,
       overflowY: 'auto',
+      overflowX: 'hidden',
       background: '#0d1117',
     }}>
       {/* Toolbar */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        padding: '10px 20px',
+        padding: '8px 16px',
         borderBottom: '1px solid rgba(48,54,61,0.4)',
-        gap: 12,
+        gap: 8,
+        flexShrink: 0,
       }}>
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 6,
-        }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <input type="checkbox" disabled style={{ accentColor: '#4285f4', cursor: 'default' }} />
-          <span style={{ fontSize: '0.75rem', color: '#484f58' }}>Seleccionar todo</span>
+          <span className="hide-xs" style={{ fontSize: '0.74rem', color: '#484f58' }}>Seleccionar todo</span>
         </div>
         <div style={{ flex: 1 }} />
-        <span style={{ fontSize: '0.72rem', color: '#484f58' }}>
-          {visibleEmails.length} de {EMAILS.length} correos
+        <span style={{ fontSize: '0.7rem', color: '#484f58' }}>
+          {visibleEmails.length} de {EMAILS.length}
         </span>
       </div>
 
@@ -202,7 +216,7 @@ export default function EmailList() {
           style={{
             display: 'flex', flexDirection: 'column',
             alignItems: 'center', justifyContent: 'center',
-            padding: '80px 20px', gap: 12,
+            padding: '60px 20px', gap: 12,
           }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -214,8 +228,12 @@ export default function EmailList() {
           >
             <RefreshCw size={28} color="#4285f4" />
           </motion.div>
-          <p style={{ color: '#8b949e', fontSize: '0.9rem' }}>Conectando a tu bandeja de entrada...</p>
-          <p style={{ color: '#484f58', fontSize: '0.75rem' }}>Los correos empezarán a llegar en un momento</p>
+          <p style={{ color: '#8b949e', fontSize: '0.9rem', textAlign: 'center' }}>
+            Conectando a tu bandeja de entrada...
+          </p>
+          <p style={{ color: '#484f58', fontSize: '0.75rem', textAlign: 'center' }}>
+            Los correos empezarán a llegar en un momento
+          </p>
         </motion.div>
       )}
     </div>
