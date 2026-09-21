@@ -7,6 +7,21 @@ export type ClientId = 'lucia' | 'diego' | 'ana' | 'roberto' | 'carla';
 
 type ViewMode = 'login' | 'inbox' | 'reading';
 
+// ── SessionStorage keys ──────────────────────────────────────────────────────
+const SS_KEY_USERNAME        = 'cw_userName';
+const SS_KEY_LOGGED_IN       = 'cw_loggedIn';
+const SS_KEY_VISIBLE_EMAILS  = 'cw_visibleEmailIds';
+const SS_KEY_READ_EMAILS     = 'cw_readEmailIds';
+
+function ssGet(key: string): string | null {
+  if (typeof window === 'undefined') return null;
+  try { return sessionStorage.getItem(key); } catch { return null; }
+}
+function ssSet(key: string, value: string): void {
+  if (typeof window === 'undefined') return;
+  try { sessionStorage.setItem(key, value); } catch { /* ignore */ }
+}
+
 interface AppState {
   userName: string;
   currentView: ViewMode;
@@ -25,15 +40,34 @@ interface AppState {
 const AppContext = createContext<AppState | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [userName, setUserName] = useState('');
-  const [currentView, setCurrentView] = useState<ViewMode>('login');
-  const [visibleEmailIds, setVisibleEmailIds] = useState<string[]>([]);
+  // ── Initialise from sessionStorage on first render ─────────────────────────
+  const [userName, setUserNameState] = useState<string>(() => ssGet(SS_KEY_USERNAME) ?? '');
+  const [loggedIn, setLoggedIn]      = useState<boolean>(() => ssGet(SS_KEY_LOGGED_IN) === 'true');
+  const [currentView, setCurrentView] = useState<ViewMode>(() =>
+    ssGet(SS_KEY_LOGGED_IN) === 'true' ? 'inbox' : 'login'
+  );
+  const [visibleEmailIds, setVisibleEmailIds] = useState<string[]>(() => {
+    const raw = ssGet(SS_KEY_VISIBLE_EMAILS);
+    try { return raw ? JSON.parse(raw) : []; } catch { return []; }
+  });
   const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
-  const [readEmailIds, setReadEmailIds] = useState<Set<string>>(new Set());
+  const [readEmailIds, setReadEmailIds] = useState<Set<string>>(() => {
+    const raw = ssGet(SS_KEY_READ_EMAILS);
+    try { return raw ? new Set<string>(JSON.parse(raw)) : new Set<string>(); } catch { return new Set<string>(); }
+  });
   const [allEmailsLoaded, setAllEmailsLoaded] = useState(false);
   const [latestEmailId, setLatestEmailId] = useState<string | null>(null);
-  const [loggedIn, setLoggedIn] = useState(false);
   const pendingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // ── Persist changes to sessionStorage ─────────────────────────────────────
+  const setUserName = useCallback((name: string) => {
+    setUserNameState(name);
+    ssSet(SS_KEY_USERNAME, name);
+  }, []);
+
+  useEffect(() => { ssSet(SS_KEY_LOGGED_IN, loggedIn ? 'true' : 'false'); }, [loggedIn]);
+  useEffect(() => { ssSet(SS_KEY_VISIBLE_EMAILS, JSON.stringify(visibleEmailIds)); }, [visibleEmailIds]);
+  useEffect(() => { ssSet(SS_KEY_READ_EMAILS, JSON.stringify([...readEmailIds])); }, [readEmailIds]);
 
   const login = useCallback(() => {
     setCurrentView('inbox');

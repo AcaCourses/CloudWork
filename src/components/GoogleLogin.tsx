@@ -1,14 +1,23 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
-import { Cloud, ArrowRight } from 'lucide-react';
+import { Cloud, ArrowRight, UserCircle2 } from 'lucide-react';
 
 export default function GoogleLogin() {
   const { userName, setUserName, login } = useApp();
   const [isFocused, setIsFocused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [savedName, setSavedName] = useState<string | null>(null);
+
+  // Read the last-used name from sessionStorage once (client-side only)
+  useEffect(() => {
+    try {
+      const stored = sessionStorage.getItem('cw_userName');
+      if (stored && stored.trim()) setSavedName(stored.trim());
+    } catch { /* ignore */ }
+  }, []);
 
   const handleLogin = () => {
     if (!userName.trim()) return;
@@ -18,6 +27,10 @@ export default function GoogleLogin() {
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') handleLogin();
+  };
+
+  const applySavedName = () => {
+    if (savedName) setUserName(savedName);
   };
 
   return (
@@ -154,6 +167,38 @@ export default function GoogleLogin() {
           animate={{ scaleX: 1 }}
           transition={{ delay: 0.6, duration: 0.5 }}
         />
+
+        {/* Saved-name quick-access chip */}
+        {savedName && (
+          <motion.div
+            style={{ marginBottom: 16 }}
+            initial={{ y: 10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.6 }}
+          >
+            <p style={{ fontSize: '0.72rem', color: '#8b949e', marginBottom: 8, letterSpacing: '0.02em' }}>
+              Última sesión guardada
+            </p>
+            <motion.button
+              id="saved-name-chip"
+              onClick={applySavedName}
+              whileHover={{ scale: 1.02, borderColor: '#4285f4' }}
+              whileTap={{ scale: 0.98 }}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 10,
+                width: '100%', padding: '10px 14px', borderRadius: 10,
+                background: 'rgba(66,133,244,0.06)',
+                border: '1.5px solid rgba(66,133,244,0.25)',
+                cursor: 'pointer', fontFamily: 'inherit',
+                transition: 'border-color 0.2s',
+              }}
+            >
+              <UserCircle2 size={18} color="#4285f4" />
+              <span style={{ color: '#e6edf3', fontSize: '0.9rem', fontWeight: 600 }}>{savedName}</span>
+              <span style={{ marginLeft: 'auto', fontSize: '0.72rem', color: '#4285f4', fontWeight: 600 }}>Usar →</span>
+            </motion.button>
+          </motion.div>
+        )}
 
         {/* Input */}
         <motion.div
